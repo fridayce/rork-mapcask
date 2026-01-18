@@ -1,0 +1,123 @@
+import { Speakeasy } from "@/types";
+
+export const mockSpeakeasies: Speakeasy[] = [
+  {
+    id: "1",
+    name: "The Back Room",
+    address: "102 Norfolk St, New York, NY",
+    location: { latitude: 40.7185, longitude: -73.9865 },
+    description:
+      "Hidden behind a metal gate and down a set of stairs, this Prohibition-era speakeasy serves craft cocktails in vintage teacups.",
+    coverPhoto:
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&q=80",
+    ambiance: "Vintage & Intimate",
+    signature: "Bourbon Old Fashioned in teacups",
+    priceRange: "$$$",
+    rating: 4.7,
+    recommendedBy: "Mike Johnson",
+    recommendedByAvatar: "https://i.pravatar.cc/150?img=12",
+    addedAt: "2024-02-15T18:30:00Z",
+  },
+  {
+    id: "2",
+    name: "Milk & Honey",
+    address: "134 Eldridge St, New York, NY",
+    location: { latitude: 40.7203, longitude: -73.9908 },
+    description:
+      "Reservation-only cocktail bar with strict house rules. One of the most authentic speakeasy experiences in the city.",
+    coverPhoto:
+      "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800&q=80",
+    ambiance: "Exclusive & Sophisticated",
+    signature: "Penicillin",
+    priceRange: "$$$$",
+    rating: 4.9,
+    recommendedBy: "Sarah Chen",
+    recommendedByAvatar: "https://i.pravatar.cc/150?img=5",
+    addedAt: "2024-02-18T20:15:00Z",
+  },
+  {
+    id: "3",
+    name: "The Violet Hour",
+    address: "1520 N Damen Ave, Chicago, IL",
+    location: { latitude: 41.9093, longitude: -87.6774 },
+    description:
+      "Enter through an unmarked door to find this Art Nouveau-inspired cocktail lounge with exceptional bartenders.",
+    coverPhoto:
+      "https://images.unsplash.com/photo-1509669803555-fd5dd3e6cfa4?w=800&q=80",
+    ambiance: "Art Deco & Elegant",
+    signature: "Juliet & Romeo",
+    priceRange: "$$$",
+    rating: 4.8,
+    recommendedBy: "David Miller",
+    recommendedByAvatar: "https://i.pravatar.cc/150?img=33",
+    addedAt: "2024-02-12T19:45:00Z",
+  },
+  {
+    id: "4",
+    name: "The Laundry Room",
+    address: "Commonwealth, Las Vegas, NV",
+    location: { latitude: 36.1147, longitude: -115.1728 },
+    description:
+      "Located behind a wall of dryers in Commonwealth bar. Text for reservations - password required at the door.",
+    coverPhoto:
+      "https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=800&q=80",
+    ambiance: "Secret & Mysterious",
+    signature: "Brown Butter Old Fashioned",
+    priceRange: "$$$$",
+    rating: 4.6,
+    recommendedBy: "Emily Rodriguez",
+    recommendedByAvatar: "https://i.pravatar.cc/150?img=47",
+    addedAt: "2024-02-10T21:00:00Z",
+  },
+  {
+    id: "5",
+    name: "Bourbon & Branch",
+    address: "501 Jones St, San Francisco, CA",
+    location: { latitude: 37.7833, longitude: -122.4167 },
+    description:
+      "Authentic speakeasy requiring a password. Features secret rooms and hidden doors throughout.",
+    coverPhoto:
+      "https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?w=800&q=80",
+    ambiance: "Historic & Authentic",
+    signature: "Prohibition Era Classics",
+    priceRange: "$$$",
+    rating: 4.5,
+    recommendedBy: "James Wilson",
+    recommendedByAvatar: "https://i.pravatar.cc/150?img=60",
+    addedAt: "2024-02-08T22:30:00Z",
+  },
+  {
+    id: "6",
+    name: "Please Don't Tell",
+    address: "113 St Marks Pl, New York, NY",
+    location: { latitude: 40.7279, longitude: -73.9868 },
+    description:
+      "Enter through a phone booth in Crif Dogs. Pick up the phone, get buzzed in to one of NYC's most famous speakeasies.",
+    coverPhoto:
+      "https://images.unsplash.com/photo-1569264975497-00bcc03bfd63?w=800&q=80",
+    ambiance: "Quirky & Fun",
+    signature: "PDT Old Fashioned",
+    priceRange: "$$$",
+    rating: 4.7,
+    recommendedBy: "Mike Johnson",
+    recommendedByAvatar: "https://i.pravatar.cc/150?img=12",
+    addedAt: "2024-02-05T20:00:00Z",
+  },
+  {
+    id: "7",
+    name: "Cask & Stave",
+    address: "107 S Railroad Ave, Ashland, VA 23005",
+    location: { latitude: 37.7588, longitude: -77.4800 },
+    description:
+      "A hidden gem in Ashland, VA offering craft cocktails and an extensive bourbon selection in an intimate, vintage atmosphere.",
+    coverPhoto:
+      "https://images.unsplash.com/photo-1582818235712-e9a84b92c9b5?w=800&q=80",
+    ambiance: "Cozy & Classic",
+    signature: "Bourbon Flight",
+    priceRange: "$$",
+    rating: 4.8,
+    recommendedBy: "Emily Rodriguez",
+    recommendedByAvatar: "https://i.pravatar.cc/150?img=47",
+    addedAt: "2024-02-20T19:30:00Z",
+  },
+];

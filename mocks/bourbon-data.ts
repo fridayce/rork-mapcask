@@ -1,0 +1,130 @@
+import { LiquorStore, BourbonFind } from "@/types";
+import { virginiaABCStores } from "./virginia-abc-stores";
+
+const localMockStores: LiquorStore[] = [
+  {
+    id: "1",
+    name: "Bourbon Street Liquors",
+    address: "123 Main St, Louisville, KY",
+    location: { latitude: 38.2527, longitude: -85.7585 },
+    addedBy: "Mike Johnson",
+    addedAt: "2024-01-15T10:30:00Z",
+  },
+  {
+    id: "2",
+    name: "Premium Spirits Co.",
+    address: "456 Oak Ave, Lexington, KY",
+    location: { latitude: 38.0406, longitude: -84.5037 },
+    addedBy: "Sarah Chen",
+    addedAt: "2024-01-20T14:20:00Z",
+  },
+  {
+    id: "3",
+    name: "The Whiskey Vault",
+    address: "789 Bourbon Trail, Bardstown, KY",
+    location: { latitude: 37.8092, longitude: -85.4669 },
+    addedBy: "David Miller",
+    addedAt: "2024-02-01T09:15:00Z",
+  },
+  {
+    id: "4",
+    name: "Kentucky Spirit Shop",
+    address: "321 Distillery Rd, Frankfort, KY",
+    location: { latitude: 38.2009, longitude: -84.8733 },
+    addedBy: "Emily Rodriguez",
+    addedAt: "2024-02-10T16:45:00Z",
+  },
+  {
+    id: "5",
+    name: "Rare Finds Liquor",
+    address: "654 Heritage Way, Bowling Green, KY",
+    location: { latitude: 36.9685, longitude: -86.4808 },
+    addedBy: "James Wilson",
+    addedAt: "2024-02-15T11:00:00Z",
+  },
+];
+
+export const mockStores: LiquorStore[] = [...localMockStores, ...virginiaABCStores];
+
+export const mockFinds: BourbonFind[] = [
+  {
+    id: "1",
+    storeName: "Bourbon Street Liquors",
+    storeAddress: "123 Main St, Louisville, KY",
+    location: { latitude: 38.2527, longitude: -85.7585 },
+    bourbonName: "Blanton's Single Barrel",
+    bourbonBrand: "Blanton's",
+    price: 89.99,
+    photos: [
+      "https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=800&q=80",
+    ],
+    description: "Found 3 bottles on the top shelf! First time seeing these in months.",
+    hunterName: "Mike Johnson",
+    hunterAvatar: "https://i.pravatar.cc/150?img=12",
+    timestamp: "2024-02-20T10:30:00Z",
+  },
+  {
+    id: "2",
+    storeName: "Premium Spirits Co.",
+    storeAddress: "456 Oak Ave, Lexington, KY",
+    location: { latitude: 38.0406, longitude: -84.5037 },
+    bourbonName: "Pappy Van Winkle 15 Year",
+    bourbonBrand: "Pappy Van Winkle",
+    price: 899.99,
+    photos: [
+      "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&q=80",
+    ],
+    description: "Unicorn alert! Manager said they got 6 bottles in today.",
+    hunterName: "Sarah Chen",
+    hunterAvatar: "https://i.pravatar.cc/150?img=5",
+    timestamp: "2024-02-19T15:20:00Z",
+  },
+  {
+    id: "3",
+    storeName: "The Whiskey Vault",
+    storeAddress: "789 Bourbon Trail, Bardstown, KY",
+    location: { latitude: 37.8092, longitude: -85.4669 },
+    bourbonName: "Weller Full Proof",
+    bourbonBrand: "Weller",
+    price: 59.99,
+    photos: [
+      "https://images.unsplash.com/photo-1599222141650-b1088c5ca795?w=800&q=80",
+    ],
+    description: "Full shelf of Weller! Get there before they're gone.",
+    hunterName: "David Miller",
+    hunterAvatar: "https://i.pravatar.cc/150?img=33",
+    timestamp: "2024-02-18T09:15:00Z",
+  },
+  {
+    id: "4",
+    storeName: "Kentucky Spirit Shop",
+    storeAddress: "321 Distillery Rd, Frankfort, KY",
+    location: { latitude: 38.2009, longitude: -84.8733 },
+    bourbonName: "Eagle Rare 10 Year",
+    bourbonBrand: "Eagle Rare",
+    price: 34.99,
+    photos: [
+      "https://images.unsplash.com/photo-1627873649417-c67f701f1949?w=800&q=80",
+    ],
+    description: "Restocked today! Limit 2 per customer.",
+    hunterName: "Emily Rodriguez",
+    hunterAvatar: "https://i.pravatar.cc/150?img=47",
+    timestamp: "2024-02-17T14:45:00Z",
+  },
+  {
+    id: "5",
+    storeName: "Rare Finds Liquor",
+    storeAddress: "654 Heritage Way, Bowling Green, KY",
+    location: { latitude: 36.9685, longitude: -86.4808 },
+    bourbonName: "Colonel E.H. Taylor Small Batch",
+    bourbonBrand: "E.H. Taylor",
+    price: 45.99,
+    photos: [
+      "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=800&q=80",
+    ],
+    description: "Great price on EHT! Also saw some Stagg Jr behind the counter.",
+    hunterName: "James Wilson",
+    hunterAvatar: "https://i.pravatar.cc/150?img=60",
+    timestamp: "2024-02-16T11:30:00Z",
+  },
+];
