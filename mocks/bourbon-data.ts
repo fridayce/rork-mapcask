@@ -62,6 +62,9 @@ export const mockFinds: BourbonFind[] = [
     hunterName: "Mike Johnson",
     hunterAvatar: "https://i.pravatar.cc/150?img=12",
     timestamp: "2024-02-20T10:30:00Z",
+    reviews: [],
+    checkIns: [],
+    favorites: [],
   },
   {
     id: "2",
@@ -78,6 +81,9 @@ export const mockFinds: BourbonFind[] = [
     hunterName: "Sarah Chen",
     hunterAvatar: "https://i.pravatar.cc/150?img=5",
     timestamp: "2024-02-19T15:20:00Z",
+    reviews: [],
+    checkIns: [],
+    favorites: [],
   },
   {
     id: "3",
@@ -94,6 +100,9 @@ export const mockFinds: BourbonFind[] = [
     hunterName: "David Miller",
     hunterAvatar: "https://i.pravatar.cc/150?img=33",
     timestamp: "2024-02-18T09:15:00Z",
+    reviews: [],
+    checkIns: [],
+    favorites: [],
   },
   {
     id: "4",
@@ -110,6 +119,9 @@ export const mockFinds: BourbonFind[] = [
     hunterName: "Emily Rodriguez",
     hunterAvatar: "https://i.pravatar.cc/150?img=47",
     timestamp: "2024-02-17T14:45:00Z",
+    reviews: [],
+    checkIns: [],
+    favorites: [],
   },
   {
     id: "5",
@@ -126,5 +138,8 @@ export const mockFinds: BourbonFind[] = [
     hunterName: "James Wilson",
     hunterAvatar: "https://i.pravatar.cc/150?img=60",
     timestamp: "2024-02-16T11:30:00Z",
+    reviews: [],
+    checkIns: [],
+    favorites: [],
   },
 ];

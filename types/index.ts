@@ -25,6 +25,9 @@ export interface BourbonFind {
   hunterName: string;
   hunterAvatar?: string;
   timestamp: string;
+  reviews: Review[];
+  checkIns: CheckIn[];
+  favorites: string[];
 }
 
 export interface User {
@@ -79,6 +82,26 @@ export interface Conversation {
   updatedAt: string;
 }
 
+export interface Review {
+  id: string;
+  userId: string;
+  userName: string;
+  userAvatar?: string;
+  rating: number;
+  text: string;
+  photos?: string[];
+  timestamp: string;
+}
+
+export interface CheckIn {
+  id: string;
+  userId: string;
+  userName: string;
+  userAvatar?: string;
+  timestamp: string;
+  note?: string;
+}
+
 export interface Speakeasy {
   id: string;
   name: string;
@@ -86,11 +109,19 @@ export interface Speakeasy {
   location: Location;
   description: string;
   coverPhoto: string;
+  photos: string[];
   ambiance: string;
   signature: string;
   priceRange: string;
   rating: number;
+  reviewCount: number;
   recommendedBy: string;
   recommendedByAvatar?: string;
   addedAt: string;
+  hours?: string;
+  phone?: string;
+  website?: string;
+  reviews: Review[];
+  checkIns: CheckIn[];
+  favorites: string[];
 }

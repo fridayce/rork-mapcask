@@ -146,6 +146,9 @@ export default function AddFindScreen() {
       hunterName: user.name,
       hunterAvatar: user.avatar,
       timestamp: new Date().toISOString(),
+      reviews: [],
+      checkIns: [],
+      favorites: [],
     };
 
     addFind(newFind);

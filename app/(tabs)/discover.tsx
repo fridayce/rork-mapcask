@@ -13,11 +13,13 @@ import { Clock, MapPin, DollarSign, Star, Wine } from "lucide-react-native";
 import { useApp } from "@/contexts/app-context";
 import Colors from "@/constants/colors";
 import HamburgerMenu from "@/components/HamburgerMenu";
+import { useRouter } from "expo-router";
 
 type Tab = "finds" | "speakeasies";
 
 export default function DiscoverScreen() {
   const { finds, speakeasies, isLoading } = useApp();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>("finds");
 
   if (isLoading) {
@@ -99,6 +101,7 @@ export default function DiscoverScreen() {
             key={find.id}
             style={styles.card}
             activeOpacity={0.7}
+            onPress={() => router.push(`/find/${find.id}`)}
           >
             <Image
               source={{ uri: find.photos[0] }}
@@ -156,6 +159,7 @@ export default function DiscoverScreen() {
             key={speakeasy.id}
             style={styles.card}
             activeOpacity={0.7}
+            onPress={() => router.push(`/speakeasy/${speakeasy.id}`)}
           >
             <Image
               source={{ uri: speakeasy.coverPhoto }}

@@ -5,10 +5,11 @@ import {
   Text,
   Platform,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE, Heatmap } from "react-native-maps";
 import * as Location from "expo-location";
-import { MapPin } from "lucide-react-native";
+import { MapPin, Wine, MapPinned } from "lucide-react-native";
 import { useApp } from "@/contexts/app-context";
 import Colors from "@/constants/colors";
 import HamburgerMenu from "@/components/HamburgerMenu";
@@ -17,8 +18,11 @@ if (Platform.OS === 'web' && typeof window !== 'undefined') {
   (window as any).GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
 }
 
+type MapFilter = "all" | "finds" | "speakeasies";
+
 export default function MapScreen() {
-  const { stores, isLoading } = useApp();
+  const { finds, speakeasies, isLoading } = useApp();
+  const [filter, setFilter] = useState<MapFilter>("all");
   const [location, setLocation] = useState<{
     latitude: number;
     longitude: number;
@@ -101,13 +105,40 @@ export default function MapScreen() {
         showsUserLocation={Platform.OS !== "web"}
         showsMyLocationButton={Platform.OS !== "web"}
       >
-        {stores.map((store) => (
+        {Platform.OS !== "web" && filter !== "speakeasies" && (
+          <Heatmap
+            points={finds.map(find => ({
+              latitude: find.location.latitude,
+              longitude: find.location.longitude,
+              weight: 1,
+            }))}
+            radius={40}
+            opacity={0.6}
+            gradient={{
+              colors: ["#00F", "#0FF", "#0F0", "#FF0", "#F00"],
+              startPoints: [0.0, 0.25, 0.5, 0.75, 1.0],
+              colorMapSize: 256,
+            }}
+          />
+        )}
+
+        {(filter === "all" || filter === "finds") && finds.map((find) => (
           <Marker
-            key={store.id}
-            coordinate={store.location}
-            title={store.name}
-            description={store.address}
-            pinColor={Colors.mapPin}
+            key={`find-${find.id}`}
+            coordinate={find.location}
+            title={find.bourbonName}
+            description={find.storeName}
+            pinColor="#E63946"
+          />
+        ))}
+
+        {(filter === "all" || filter === "speakeasies") && speakeasies.map((speakeasy) => (
+          <Marker
+            key={`speakeasy-${speakeasy.id}`}
+            coordinate={speakeasy.location}
+            title={speakeasy.name}
+            description={speakeasy.address}
+            pinColor="#457B9D"
           />
         ))}
       </MapView>
@@ -118,9 +149,47 @@ export default function MapScreen() {
           <Text style={styles.headerTitle}>MapCask</Text>
           <View style={styles.storeCount}>
             <MapPin size={16} color={Colors.text} />
-            <Text style={styles.storeCountText}>{stores.length} stores</Text>
+            <Text style={styles.storeCountText}>
+              {filter === "all" 
+                ? `${finds.length + speakeasies.length} pins` 
+                : filter === "finds" 
+                ? `${finds.length} finds`
+                : `${speakeasies.length} spots`}
+            </Text>
           </View>
         </View>
+      </View>
+
+      <View style={styles.filterBar}>
+        <TouchableOpacity
+          style={[styles.filterButton, filter === "all" && styles.filterButtonActive]}
+          onPress={() => setFilter("all")}
+        >
+          <MapPin size={18} color={filter === "all" ? Colors.text : Colors.textSecondary} />
+          <Text style={[styles.filterButtonText, filter === "all" && styles.filterButtonTextActive]}>
+            All
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.filterButton, filter === "finds" && styles.filterButtonActive]}
+          onPress={() => setFilter("finds")}
+        >
+          <Wine size={18} color={filter === "finds" ? Colors.text : Colors.textSecondary} />
+          <Text style={[styles.filterButtonText, filter === "finds" && styles.filterButtonTextActive]}>
+            Finds ({finds.length})
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.filterButton, filter === "speakeasies" && styles.filterButtonActive]}
+          onPress={() => setFilter("speakeasies")}
+        >
+          <MapPinned size={18} color={filter === "speakeasies" ? Colors.text : Colors.textSecondary} />
+          <Text style={[styles.filterButtonText, filter === "speakeasies" && styles.filterButtonTextActive]}>
+            Speakeasies ({speakeasies.length})
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {errorMsg ? (
@@ -217,5 +286,40 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.textSecondary,
     textAlign: "center",
+  },
+  filterBar: {
+    position: "absolute",
+    top: 140,
+    left: 20,
+    right: 20,
+    flexDirection: "row",
+    gap: 8,
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  filterButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: Colors.background,
+  },
+  filterButtonActive: {
+    backgroundColor: Colors.primary,
+  },
+  filterButtonText: {
+    fontSize: 13,
+    fontWeight: "600" as const,
+    color: Colors.textSecondary,
+  },
+  filterButtonTextActive: {
+    color: Colors.text,
   },
 });
