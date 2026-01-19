@@ -34,6 +34,7 @@ export interface User {
   avatar?: string;
   city?: string;
   state?: string;
+  points: number;
   joinedAt: string;
 }
 

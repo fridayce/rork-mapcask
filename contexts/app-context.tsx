@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState, useEffect, useMemo } from "react";
 import { LiquorStore, BourbonFind, User, Speakeasy } from "@/types";
+import { POINT_REWARDS } from "@/constants/levels";
 import { mockStores, mockFinds } from "@/mocks/bourbon-data";
 import { mockSpeakeasies } from "@/mocks/speakeasy-data";
 
@@ -82,6 +83,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
         name: userData.name,
         email: userData.email,
         avatar: `https://i.pravatar.cc/150?u=${userData.email}`,
+        points: 0,
         joinedAt: new Date().toISOString(),
       };
       await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser));
@@ -117,6 +119,13 @@ export const [AppProvider, useApp] = createContextHook(() => {
     mutationFn: async (store: LiquorStore) => {
       const updated = [...stores, store];
       await AsyncStorage.setItem(STORAGE_KEYS.STORES, JSON.stringify(updated));
+      
+      if (user) {
+        const updatedUser = { ...user, points: user.points + POINT_REWARDS.ADD_STORE };
+        await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
+        setUser(updatedUser);
+      }
+      
       return updated;
     },
     onSuccess: (data) => {
@@ -128,6 +137,13 @@ export const [AppProvider, useApp] = createContextHook(() => {
     mutationFn: async (find: BourbonFind) => {
       const updated = [find, ...finds];
       await AsyncStorage.setItem(STORAGE_KEYS.FINDS, JSON.stringify(updated));
+      
+      if (user) {
+        const updatedUser = { ...user, points: user.points + POINT_REWARDS.ADD_FIND };
+        await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
+        setUser(updatedUser);
+      }
+      
       return updated;
     },
     onSuccess: (data) => {
@@ -139,6 +155,13 @@ export const [AppProvider, useApp] = createContextHook(() => {
     mutationFn: async (speakeasy: Speakeasy) => {
       const updated = [speakeasy, ...speakeasies];
       await AsyncStorage.setItem(STORAGE_KEYS.SPEAKEASIES, JSON.stringify(updated));
+      
+      if (user) {
+        const updatedUser = { ...user, points: user.points + POINT_REWARDS.ADD_SPEAKEASY };
+        await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
+        setUser(updatedUser);
+      }
+      
       return updated;
     },
     onSuccess: (data) => {

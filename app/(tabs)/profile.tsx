@@ -12,9 +12,10 @@ import {
   Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { User, LogOut, Trophy, MapPin, Camera, Edit2, Save, X } from "lucide-react-native";
+import { User, LogOut, Trophy, MapPin, Camera, Edit2, Save, X, Search, Wine, GlassWater, Crown } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useApp, useUserFinds } from "@/contexts/app-context";
+import { getUserLevel, getLevelProgress, getPointsToNextLevel } from "@/constants/levels";
 import Colors from "@/constants/colors";
 import HamburgerMenu from "@/components/HamburgerMenu";
 
@@ -192,6 +193,50 @@ export default function ProfileScreen() {
 
           <Text style={styles.userName}>{user.name}</Text>
           <Text style={styles.userEmail}>{user.email}</Text>
+          
+          <View style={styles.levelBadge}>
+            {getUserLevel(user.points).icon === "search" && (
+              <Search size={20} color={getUserLevel(user.points).color} />
+            )}
+            {getUserLevel(user.points).icon === "wine" && (
+              <Wine size={20} color={getUserLevel(user.points).color} />
+            )}
+            {getUserLevel(user.points).icon === "glass-water" && (
+              <GlassWater size={20} color={getUserLevel(user.points).color} />
+            )}
+            {getUserLevel(user.points).icon === "crown" && (
+              <Crown size={20} color={getUserLevel(user.points).color} />
+            )}
+            <Text style={[styles.levelText, { color: getUserLevel(user.points).color }]}>
+              {getUserLevel(user.points).name}
+            </Text>
+          </View>
+          
+          <Text style={styles.levelDescription}>
+            {getUserLevel(user.points).description}
+          </Text>
+          
+          <View style={styles.pointsContainer}>
+            <View style={styles.pointsHeader}>
+              <Text style={styles.pointsLabel}>{user.points} points</Text>
+              {getPointsToNextLevel(user.points) > 0 && (
+                <Text style={styles.pointsToNext}>
+                  {getPointsToNextLevel(user.points)} to next level
+                </Text>
+              )}
+            </View>
+            <View style={styles.progressBar}>
+              <View 
+                style={[
+                  styles.progressFill, 
+                  { 
+                    width: `${getLevelProgress(user.points)}%`,
+                    backgroundColor: getUserLevel(user.points).color
+                  }
+                ]} 
+              />
+            </View>
+          </View>
           
           {(user.city || user.state || isEditing) && (
             <View style={styles.locationContainer}>
@@ -457,6 +502,56 @@ const styles = StyleSheet.create({
   userEmail: {
     fontSize: 14,
     color: Colors.textSecondary,
+  },
+  levelBadge: {
+    flexDirection: "row" as const,
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: Colors.surfaceLight,
+    marginTop: 12,
+  },
+  levelText: {
+    fontSize: 16,
+    fontWeight: "700" as const,
+  },
+  levelDescription: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    textAlign: "center" as const,
+    marginTop: 4,
+  },
+  pointsContainer: {
+    width: "100%",
+    paddingHorizontal: 16,
+    marginTop: 16,
+    gap: 8,
+  },
+  pointsHeader: {
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "center",
+  },
+  pointsLabel: {
+    fontSize: 14,
+    fontWeight: "600" as const,
+    color: Colors.text,
+  },
+  pointsToNext: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+  },
+  progressBar: {
+    height: 8,
+    backgroundColor: Colors.border,
+    borderRadius: 4,
+    overflow: "hidden" as const,
+  },
+  progressFill: {
+    height: "100%",
+    borderRadius: 4,
   },
   statsContainer: {
     flexDirection: "row",
