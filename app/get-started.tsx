@@ -71,7 +71,7 @@ export default function GetStartedScreen() {
 
           <TouchableOpacity
             style={styles.getStartedButton}
-            onPress={() => router.replace('/(tabs)')}
+            onPress={() => router.replace('/location-permission')}
             activeOpacity={0.9}
           >
             <View style={styles.buttonGradient}>
