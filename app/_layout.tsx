@@ -19,6 +19,8 @@ function RootLayoutNav() {
       <Stack.Screen name="location-permission" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="chat/[id]" options={{ headerShown: false }} />
+      <Stack.Screen name="find/[id]" options={{ headerShown: false }} />
+      <Stack.Screen name="speakeasy/[id]" options={{ headerShown: false }} />
       <Stack.Screen name="admin" options={{ headerShown: false }} />
     </Stack>
   );
