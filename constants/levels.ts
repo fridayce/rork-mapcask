@@ -13,39 +13,78 @@ export const LEVELS: Level[] = [
     id: "explorer",
     name: "Explorer",
     minPoints: 0,
-    maxPoints: 99,
+    maxPoints: 499,
     icon: "search",
     color: "#3B82F6",
-    description: "Just starting your bourbon journey",
+    description: "Entry level - Just starting your bourbon journey",
   },
   {
     id: "enthusiast",
     name: "Enthusiast",
-    minPoints: 100,
-    maxPoints: 499,
+    minPoints: 500,
+    maxPoints: 1999,
     icon: "wine",
     color: "#8B5CF6",
-    description: "Developing your palate",
+    description: "Developing your palate - Access to bonus drops",
   },
   {
     id: "connoisseur",
     name: "Connoisseur",
-    minPoints: 500,
-    maxPoints: 999,
+    minPoints: 2000,
+    maxPoints: 4999,
     icon: "glass-water",
     color: "#F59E0B",
-    description: "A true bourbon aficionado",
+    description: "A true bourbon aficionado - Early alerts",
   },
   {
     id: "master",
     name: "Master",
-    minPoints: 1000,
+    minPoints: 5000,
     maxPoints: Infinity,
     icon: "crown",
     color: "#EF4444",
-    description: "Elite bourbon hunter",
+    description: "Elite bourbon hunter - Exclusive rewards",
   },
 ];
+
+export interface LevelPointRewards {
+  checkIn: number;
+  qrScan: number;
+  bottleFindShare: number;
+  photoUpload: number;
+  reviewComment: number;
+}
+
+export const LEVEL_POINT_REWARDS: Record<string, LevelPointRewards> = {
+  explorer: {
+    checkIn: 10,
+    qrScan: 5,
+    bottleFindShare: 25,
+    photoUpload: 10,
+    reviewComment: 5,
+  },
+  enthusiast: {
+    checkIn: 15,
+    qrScan: 10,
+    bottleFindShare: 40,
+    photoUpload: 15,
+    reviewComment: 10,
+  },
+  connoisseur: {
+    checkIn: 20,
+    qrScan: 15,
+    bottleFindShare: 60,
+    photoUpload: 25,
+    reviewComment: 15,
+  },
+  master: {
+    checkIn: 25,
+    qrScan: 20,
+    bottleFindShare: 100,
+    photoUpload: 40,
+    reviewComment: 25,
+  },
+};
 
 export const POINT_REWARDS = {
   ADD_FIND: 50,
