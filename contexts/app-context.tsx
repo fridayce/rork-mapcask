@@ -94,6 +94,24 @@ export const [AppProvider, useApp] = createContextHook(() => {
     },
   });
 
+  const signInWithGoogleMutation = useMutation({
+    mutationFn: async (userData: { name: string; email: string; avatar?: string; googleId: string }) => {
+      const newUser: User = {
+        id: userData.googleId,
+        name: userData.name,
+        email: userData.email,
+        avatar: userData.avatar || `https://i.pravatar.cc/150?u=${userData.email}`,
+        points: 0,
+        joinedAt: new Date().toISOString(),
+      };
+      await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser));
+      return newUser;
+    },
+    onSuccess: (data) => {
+      setUser(data);
+    },
+  });
+
   const signOutMutation = useMutation({
     mutationFn: async () => {
       await AsyncStorage.removeItem(STORAGE_KEYS.USER);
@@ -180,12 +198,14 @@ export const [AppProvider, useApp] = createContextHook(() => {
     isLoading,
     signIn: (data: { name: string; email: string }) =>
       signInMutation.mutate(data),
+    signInWithGoogle: (data: { name: string; email: string; avatar?: string; googleId: string }) =>
+      signInWithGoogleMutation.mutate(data),
     signOut: () => signOutMutation.mutate(),
     updateProfile: (updates: Partial<User>) => updateProfileMutation.mutate(updates),
     addStore: (store: LiquorStore) => addStoreMutation.mutate(store),
     addFind: (find: BourbonFind) => addFindMutation.mutate(find),
     addSpeakeasy: (speakeasy: Speakeasy) => addSpeakeasyMutation.mutate(speakeasy),
-    isSigningIn: signInMutation.isPending,
+    isSigningIn: signInMutation.isPending || signInWithGoogleMutation.isPending,
     isSigningOut: signOutMutation.isPending,
     isUpdatingProfile: updateProfileMutation.isPending,
     isAddingStore: addStoreMutation.isPending,

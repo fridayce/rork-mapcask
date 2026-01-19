@@ -1,23 +1,80 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Mail } from 'lucide-react-native';
+import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
 import AgeVerification from '@/components/AgeVerification';
 import AnimatedSplash from '@/components/AnimatedSplash';
+import { useApp } from '@/contexts/app-context';
+
+WebBrowser.maybeCompleteAuthSession();
 
 const { width } = Dimensions.get('window');
 
+const GOOGLE_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || '';
+const GOOGLE_IOS_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || '';
+const GOOGLE_ANDROID_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID || '';
+
 export default function LoginScreen() {
   const router = useRouter();
+  const { signInWithGoogle, isSigningIn } = useApp();
   const [showSplash, setShowSplash] = useState(true);
   const [showAgeVerification, setShowAgeVerification] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [, response, promptAsync] = Google.useAuthRequest({
+    webClientId: GOOGLE_CLIENT_ID,
+    iosClientId: GOOGLE_IOS_CLIENT_ID,
+    androidClientId: GOOGLE_ANDROID_CLIENT_ID,
+  });
 
   useEffect(() => {
     console.log('Login screen mounted');
   }, []);
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { authentication } = response;
+      if (authentication?.accessToken) {
+        const fetchUserInfo = async (accessToken: string) => {
+          try {
+            console.log('Fetching user info with access token');
+            const userInfoResponse = await fetch(
+              'https://www.googleapis.com/userinfo/v2/me',
+              {
+                headers: { Authorization: `Bearer ${accessToken}` },
+              }
+            );
+            const userInfo = await userInfoResponse.json();
+            console.log('Google user info:', userInfo);
+
+            signInWithGoogle({
+              name: userInfo.name || 'User',
+              email: userInfo.email,
+              avatar: userInfo.picture,
+              googleId: userInfo.id,
+            });
+
+            router.replace('/get-started');
+          } catch (error) {
+            console.error('Error fetching user info:', error);
+            Alert.alert('Sign In Failed', 'Could not retrieve user information.');
+          } finally {
+            setIsLoading(false);
+          }
+        };
+        fetchUserInfo(authentication.accessToken);
+      }
+    } else if (response?.type === 'error') {
+      console.log('Google auth error:', response.error);
+      Alert.alert('Sign In Failed', 'Could not sign in with Google. Please try again.');
+      setIsLoading(false);
+    }
+  }, [response, signInWithGoogle, router]);
 
   if (showSplash) {
     return <AnimatedSplash onFinish={() => {
@@ -42,9 +99,23 @@ export default function LoginScreen() {
     router.replace('/get-started');
   };
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     console.log('Google Sign In pressed');
-    router.replace('/get-started');
+    if (!GOOGLE_CLIENT_ID && !GOOGLE_IOS_CLIENT_ID && !GOOGLE_ANDROID_CLIENT_ID) {
+      Alert.alert(
+        'Configuration Required',
+        'Google Sign-In is not configured. Please add Google OAuth credentials.',
+        [{ text: 'Continue as Guest', onPress: () => router.replace('/get-started') }]
+      );
+      return;
+    }
+    setIsLoading(true);
+    try {
+      await promptAsync();
+    } catch (error) {
+      console.error('Error prompting Google auth:', error);
+      setIsLoading(false);
+    }
   };
 
   const handleEmailSignIn = () => {
@@ -85,17 +156,24 @@ export default function LoginScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.socialButton}
+              style={[styles.socialButton, (isLoading || isSigningIn) && styles.disabledButton]}
               onPress={handleGoogleSignIn}
               activeOpacity={0.7}
+              disabled={isLoading || isSigningIn}
             >
               <View style={styles.socialButtonContent}>
-                <Image
-                  source={{ uri: 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg' }}
-                  style={styles.googleIcon}
-                  contentFit="contain"
-                />
-                <Text style={styles.socialButtonText}>Sign up with Google</Text>
+                {isLoading ? (
+                  <ActivityIndicator size="small" color="#4285F4" style={{ marginRight: 10 }} />
+                ) : (
+                  <Image
+                    source={{ uri: 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg' }}
+                    style={styles.googleIcon}
+                    contentFit="contain"
+                  />
+                )}
+                <Text style={styles.socialButtonText}>
+                  {isLoading ? 'Signing in...' : 'Sign up with Google'}
+                </Text>
               </View>
             </TouchableOpacity>
 
@@ -267,5 +345,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '500' as const,
     color: '#666666',
+  },
+  disabledButton: {
+    opacity: 0.6,
   },
 });
