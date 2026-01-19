@@ -1,21 +1,22 @@
-const amber = "#D2691E";
-const darkAmber = "#B8860B";
-const darkWood = "#2C1810";
-const mediumWood = "#4E342E";
-const lightAmber = "#F4A460";
-const cream = "#FFF8DC";
+const blue = "#4A90E2";
+const darkBlue = "#357ABD";
+const lightBlue = "#E3F2FD";
+const mediumBlue = "#64B5F6";
 
 export default {
-  primary: amber,
-  primaryDark: darkAmber,
-  background: "#0A0705",
-  surface: darkWood,
-  surfaceLight: mediumWood,
-  text: cream,
-  textSecondary: "#BFA88A",
-  accent: lightAmber,
+  primary: blue,
+  primaryDark: darkBlue,
+  background: "#F8F9FA",
+  surface: "#FFFFFF",
+  surfaceLight: "#F5F5F5",
+  text: "#1A1A1A",
+  textSecondary: "#757575",
+  accent: mediumBlue,
   success: "#4CAF50",
   error: "#EF5350",
-  border: "#3E2723",
-  mapPin: darkAmber,
+  border: "#E0E0E0",
+  mapPin: darkBlue,
+  cardBackground: "#FFFFFF",
+  pillBackground: lightBlue,
+  pillText: blue,
 };

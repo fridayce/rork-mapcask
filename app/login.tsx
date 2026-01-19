@@ -140,7 +140,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8F9FA',
   },
   safeArea: {
     flex: 1,
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   emailButton: {
-    backgroundColor: '#C4883C',
+    backgroundColor: '#4A90E2',
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   signInLink: {
     fontSize: 15,
     fontWeight: '600' as const,
-    color: '#C4883C',
+    color: '#4A90E2',
     textDecorationLine: 'underline',
   },
   footer: {

@@ -3,7 +3,6 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Map, Users, Award, Compass } from 'lucide-react-native';
 import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
 
@@ -35,10 +34,6 @@ export default function GetStartedScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#1a1a1a', '#2a1810', '#1a1a1a']}
-        style={StyleSheet.absoluteFillObject}
-      />
       
       <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
         <ScrollView 
@@ -63,7 +58,7 @@ export default function GetStartedScreen() {
               return (
                 <View key={index} style={styles.featureCard}>
                   <View style={styles.iconContainer}>
-                    <Icon size={28} color="#D4A574" strokeWidth={2} />
+                    <Icon size={28} color="#4A90E2" strokeWidth={2} />
                   </View>
                   <View style={styles.featureTextContainer}>
                     <Text style={styles.featureTitle}>{feature.title}</Text>
@@ -79,14 +74,9 @@ export default function GetStartedScreen() {
             onPress={() => router.replace('/(tabs)')}
             activeOpacity={0.9}
           >
-            <LinearGradient
-              colors={['#D4A574', '#B8935E']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.buttonGradient}
-            >
+            <View style={styles.buttonGradient}>
               <Text style={styles.buttonText}>Get Started</Text>
-            </LinearGradient>
+            </View>
           </TouchableOpacity>
 
           <Text style={styles.footerText}>
@@ -101,7 +91,7 @@ export default function GetStartedScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#F8F9FA',
   },
   safeArea: {
     flex: 1,
@@ -124,13 +114,13 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: 32,
     fontWeight: '700' as const,
-    color: '#ffffff',
+    color: '#1A1A1A',
     marginBottom: 12,
     letterSpacing: 0.5,
   },
   subtitle: {
     fontSize: 16,
-    color: '#999999',
+    color: '#666666',
     textAlign: 'center',
     lineHeight: 24,
     paddingHorizontal: 20,
@@ -140,18 +130,23 @@ const styles = StyleSheet.create({
   },
   featureCard: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 20,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: 'rgba(212, 165, 116, 0.1)',
+    borderColor: '#E0E0E0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   iconContainer: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: 'rgba(212, 165, 116, 0.15)',
+    backgroundColor: '#E3F2FD',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 16,
@@ -163,41 +158,42 @@ const styles = StyleSheet.create({
   featureTitle: {
     fontSize: 18,
     fontWeight: '600' as const,
-    color: '#ffffff',
+    color: '#1A1A1A',
     marginBottom: 4,
   },
   featureDescription: {
     fontSize: 14,
-    color: '#999999',
+    color: '#757575',
     lineHeight: 20,
   },
   getStartedButton: {
     marginBottom: 24,
-    borderRadius: 16,
+    borderRadius: 12,
     overflow: 'hidden',
-    shadowColor: '#D4A574',
+    shadowColor: '#4A90E2',
     shadowOffset: {
       width: 0,
-      height: 8,
+      height: 4,
     },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   buttonGradient: {
     paddingVertical: 18,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#4A90E2',
   },
   buttonText: {
     fontSize: 18,
     fontWeight: '700' as const,
-    color: '#1a1a1a',
+    color: '#FFFFFF',
     letterSpacing: 0.5,
   },
   footerText: {
     fontSize: 14,
-    color: '#666666',
+    color: '#999999',
     textAlign: 'center',
     fontStyle: 'italic' as const,
   },
