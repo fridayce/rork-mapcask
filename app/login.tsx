@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, ActivityIndicator, Alert, Pressable } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
-import { Mail } from 'lucide-react-native';
+import { Mail, Check } from 'lucide-react-native';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
 import AgeVerification from '@/components/AgeVerification';
@@ -25,6 +26,32 @@ export default function LoginScreen() {
   const [showAgeVerification, setShowAgeVerification] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    const loadRememberMePreference = async () => {
+      try {
+        const saved = await AsyncStorage.getItem('rememberMe');
+        if (saved === 'true') {
+          setRememberMe(true);
+        }
+      } catch (error) {
+        console.log('Error loading remember me preference:', error);
+      }
+    };
+    loadRememberMePreference();
+  }, []);
+
+  const toggleRememberMe = async () => {
+    const newValue = !rememberMe;
+    setRememberMe(newValue);
+    try {
+      await AsyncStorage.setItem('rememberMe', newValue.toString());
+      console.log('Remember me preference saved:', newValue);
+    } catch (error) {
+      console.log('Error saving remember me preference:', error);
+    }
+  };
 
   const [, response, promptAsync] = Google.useAuthRequest({
     webClientId: GOOGLE_CLIENT_ID,
@@ -192,6 +219,17 @@ export default function LoginScreen() {
               <Text style={styles.emailButtonText}>Sign up with email</Text>
             </TouchableOpacity>
 
+            <Pressable 
+              style={styles.rememberMeContainer} 
+              onPress={toggleRememberMe}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
+                {rememberMe && <Check size={14} color="#FFFFFF" strokeWidth={3} />}
+              </View>
+              <Text style={styles.rememberMeText}>Keep me signed in</Text>
+            </Pressable>
+
             <View style={styles.signInContainer}>
               <Text style={styles.signInText}>Already have an account?  </Text>
               <TouchableOpacity onPress={() => router.replace('/get-started')}>
@@ -314,11 +352,37 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     marginLeft: 10,
   },
+  rememberMeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 18,
+    alignSelf: 'center',
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: '#D0D0D0',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  checkboxChecked: {
+    backgroundColor: '#4A90E2',
+    borderColor: '#4A90E2',
+  },
+  rememberMeText: {
+    fontSize: 14,
+    color: '#666666',
+    fontWeight: '500' as const,
+  },
   signInContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 16,
   },
   signInText: {
     fontSize: 15,
