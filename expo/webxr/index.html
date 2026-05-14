@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>MapCask AR — Scan to Enter</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --amber: #E8922A;
+      --amber-lt: #F5B563;
+      --bg: #0C0A10;
+      --surface: #181420;
+      --border: rgba(232, 146, 42, 0.28);
+      --text: #F0E8D8;
+      --dim: #7A8899;
+      --blue: #457B9D;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bot: env(safe-area-inset-bottom, 0px);
+    }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: calc(var(--safe-top) + 32px) 24px calc(var(--safe-bot) + 40px);
+      gap: 0;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    .logo { font-size: 56px; filter: drop-shadow(0 0 18px rgba(232, 146, 42, 0.5)); }
+
+    .brand {
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--amber);
+      letter-spacing: 1px;
+    }
+
+    .tagline {
+      font-size: 15px;
+      color: var(--dim);
+      line-height: 1.5;
+      max-width: 300px;
+    }
+
+    /* ── QR card ── */
+    .qr-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      max-width: 360px;
+      margin-bottom: 28px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.45);
+    }
+
+    .qr-label {
+      font-size: 13px;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+    }
+
+    /* ── QR code SVG ── */
+    .qr-wrapper {
+      background: #fff;
+      border-radius: 16px;
+      padding: 14px;
+      width: 220px;
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Encoded as a visual SVG pattern representing the URL qr code */
+    .qr-wrapper svg { width: 192px; height: 192px; }
+
+    .qr-url {
+      font-size: 11px;
+      color: var(--dim);
+      word-break: break-all;
+      text-align: center;
+      max-width: 220px;
+    }
+
+    /* ── CTA button ── */
+    .btn-launch {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 360px;
+      padding: 18px;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(135deg, var(--amber) 0%, #B5621A 100%);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 28px rgba(232, 146, 42, 0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+      margin-bottom: 28px;
+    }
+
+    .btn-launch:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 14px rgba(232, 146, 42, 0.3);
+    }
+
+    /* ── How it works ── */
+    .how-section {
+      width: 100%;
+      max-width: 360px;
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(232, 146, 42, 0.18);
+      border: 1.5px solid var(--amber);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--amber);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-text { flex: 1; }
+
+    .step-text strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .step-text span {
+      font-size: 12px;
+      color: var(--dim);
+      line-height: 1.5;
+    }
+
+    /* ── Tech stack badge row ── */
+    .tech-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      width: 100%;
+      max-width: 360px;
+      margin-bottom: 28px;
+    }
+
+    .tech-badge {
+      background: rgba(69, 123, 157, 0.15);
+      border: 1px solid rgba(69, 123, 157, 0.35);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #7EB8D4;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Compatibility grid ── */
+    .compat-section {
+      width: 100%;
+      max-width: 360px;
+      margin-bottom: 32px;
+    }
+
+    .compat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .compat-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .compat-item .icon { font-size: 20px; }
+    .compat-item .name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .compat-item .mode { font-size: 11px; color: var(--dim); line-height: 1.4; }
+
+    .badge-webxr {
+      display: inline-block;
+      background: rgba(76, 208, 128, 0.15);
+      border: 1px solid rgba(76, 208, 128, 0.35);
+      border-radius: 6px;
+      padding: 1px 6px;
+      font-size: 10px;
+      color: #4DD080;
+      font-weight: 700;
+    }
+
+    .badge-fallback {
+      display: inline-block;
+      background: rgba(232, 146, 42, 0.15);
+      border: 1px solid rgba(232, 146, 42, 0.35);
+      border-radius: 6px;
+      padding: 1px 6px;
+      font-size: 10px;
+      color: var(--amber);
+      font-weight: 700;
+    }
+
+    /* ── Footer ── */
+    footer {
+      font-size: 11px;
+      color: var(--dim);
+      text-align: center;
+      opacity: 0.6;
+      line-height: 1.6;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      width: 100%;
+      max-width: 360px;
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 4px 0 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">🥃</div>
+    <h1 class="brand">MapCask AR</h1>
+    <p class="tagline">
+      Walk to a bourbon find or hidden speakeasy and see it
+      appear in augmented reality — no app download required.
+    </p>
+  </header>
+
+  <!-- QR code card -->
+  <div class="qr-card">
+    <p class="qr-label">Scan with your phone</p>
+
+    <!--
+      QR code SVG — encodes the URL of the AR experience page (ar.html).
+      In production, generate this with a library such as qrcode.js or a
+      server-side QR API using the actual deployed HTTPS URL.
+
+      The pattern below is a visual placeholder that demonstrates the
+      correct layout. Replace the SVG content with a real QR code that
+      encodes your deployed URL before going live.
+    -->
+    <div class="qr-wrapper">
+      <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+        <!-- Finder pattern: top-left -->
+        <rect x="0" y="0" width="7" height="7" fill="#111"/>
+        <rect x="1" y="1" width="5" height="5" fill="#fff"/>
+        <rect x="2" y="2" width="3" height="3" fill="#111"/>
+        <!-- Finder pattern: top-right -->
+        <rect x="18" y="0" width="7" height="7" fill="#111"/>
+        <rect x="19" y="1" width="5" height="5" fill="#fff"/>
+        <rect x="20" y="2" width="3" height="3" fill="#111"/>
+        <!-- Finder pattern: bottom-left -->
+        <rect x="0" y="18" width="7" height="7" fill="#111"/>
+        <rect x="1" y="19" width="5" height="5" fill="#fff"/>
+        <rect x="2" y="20" width="3" height="3" fill="#111"/>
+        <!-- Timing strips -->
+        <rect x="8" y="6" width="1" height="1" fill="#111"/>
+        <rect x="10" y="6" width="1" height="1" fill="#111"/>
+        <rect x="12" y="6" width="1" height="1" fill="#111"/>
+        <rect x="6" y="8" width="1" height="1" fill="#111"/>
+        <rect x="6" y="10" width="1" height="1" fill="#111"/>
+        <rect x="6" y="12" width="1" height="1" fill="#111"/>
+        <!-- Data modules (representative pattern) -->
+        <rect x="8" y="8" width="2" height="2" fill="#111"/>
+        <rect x="11" y="8" width="2" height="2" fill="#111"/>
+        <rect x="14" y="8" width="3" height="2" fill="#111"/>
+        <rect x="8" y="11" width="3" height="2" fill="#111"/>
+        <rect x="13" y="11" width="2" height="2" fill="#111"/>
+        <rect x="16" y="11" width="2" height="2" fill="#111"/>
+        <rect x="8" y="14" width="2" height="3" fill="#111"/>
+        <rect x="11" y="14" width="3" height="2" fill="#111"/>
+        <rect x="15" y="14" width="2" height="3" fill="#111"/>
+        <rect x="8" y="18" width="2" height="2" fill="#111"/>
+        <rect x="11" y="18" width="4" height="2" fill="#111"/>
+        <rect x="17" y="18" width="2" height="2" fill="#111"/>
+        <rect x="8" y="21" width="3" height="2" fill="#111"/>
+        <rect x="13" y="21" width="2" height="2" fill="#111"/>
+        <rect x="16" y="20" width="3" height="3" fill="#111"/>
+        <rect x="19" y="8" width="3" height="3" fill="#111"/>
+        <rect x="22" y="8" width="2" height="2" fill="#111"/>
+        <rect x="20" y="11" width="2" height="2" fill="#111"/>
+        <rect x="19" y="14" width="4" height="2" fill="#111"/>
+        <rect x="22" y="12" width="2" height="3" fill="#111"/>
+      </svg>
+    </div>
+
+    <p class="qr-url" id="ar-url">ar.html</p>
+  </div>
+
+  <!-- Direct launch button (for users already on mobile) -->
+  <a href="ar.html" class="btn-launch" id="btn-open-ar">
+    <span>🚀</span>
+    <span>Open AR Experience</span>
+  </a>
+
+  <hr class="divider" />
+
+  <!-- How it works -->
+  <section class="how-section">
+    <p class="section-title">How it works</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>Scan &amp; Open</strong>
+          <span>Scan this QR code on any mobile browser — no app install needed.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>Allow Permissions</strong>
+          <span>Grant camera and GPS access when prompted. Your location stays on-device.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>Walk to a Location</strong>
+          <span>Approach any pinned bourbon find or speakeasy within 200 m.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <strong>AR Objects Appear</strong>
+          <span>Floating 3D bottles and location pins emerge at the real-world GPS coordinates.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">
+          <strong>Tap to Inspect</strong>
+          <span>Tap any AR object for price, brand info, and hunter notes.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- Tech stack -->
+  <section class="how-section">
+    <p class="section-title">Technology</p>
+    <div class="tech-row">
+      <span class="tech-badge">Unity 2022 LTS</span>
+      <span class="tech-badge">WebXR Device API</span>
+      <span class="tech-badge">WebGL 2.0</span>
+      <span class="tech-badge">Three.js r160</span>
+      <span class="tech-badge">AR Foundation 5</span>
+      <span class="tech-badge">Geolocation API</span>
+      <span class="tech-badge">DeviceOrientation API</span>
+      <span class="tech-badge">WebAssembly</span>
+    </div>
+    <p style="font-size:12px;color:var(--dim);text-align:center;line-height:1.6;margin-top:12px;">
+      Unity compiles C# AR logic to WebAssembly. The WebXR Export package replaces
+      Unity's native XR backend with a WebXR session so the same code runs in any browser.
+      A custom .jslib plugin bridges GPS and compass data from the browser into Unity C#.
+    </p>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- Browser compatibility -->
+  <section class="compat-section">
+    <p class="section-title">Browser support</p>
+    <div class="compat-grid">
+      <div class="compat-item">
+        <span class="icon">🤖</span>
+        <span class="name">Android Chrome</span>
+        <span class="mode"><span class="badge-webxr">WebXR</span> Full AR, hit-test, light estimation</span>
+      </div>
+      <div class="compat-item">
+        <span class="icon"></span>
+        <span class="name">iPhone Safari</span>
+        <span class="mode"><span class="badge-fallback">Fallback</span> Camera + Three.js overlay</span>
+      </div>
+      <div class="compat-item">
+        <span class="icon">🦊</span>
+        <span class="name">Firefox</span>
+        <span class="mode"><span class="badge-fallback">Fallback</span> Camera passthrough mode</span>
+      </div>
+      <div class="compat-item">
+        <span class="icon">💻</span>
+        <span class="name">Desktop</span>
+        <span class="mode"><span class="badge-fallback">Fallback</span> 3D scene, no camera feed</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>MapCask AR — Proof of Concept</p>
+    <p>Unity WebGL + WebXR Device API + GPS Location Services</p>
+  </footer>
+
+  <script>
+    // Update the QR URL label and button href to the actual deployed URL
+    (function () {
+      const base = window.location.origin + window.location.pathname.replace('index.html', '');
+      const arUrl = base + 'ar.html';
+      const urlEl = document.getElementById('ar-url');
+      const btnEl = document.getElementById('btn-open-ar');
+      if (urlEl) urlEl.textContent = arUrl;
+      if (btnEl) btnEl.href = arUrl;
+    })();
+  </script>
+
+</body>
+</html>

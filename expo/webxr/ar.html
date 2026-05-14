@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>MapCask AR</title>
+  <link rel="stylesheet" href="css/ar.css" />
+</head>
+<body>
+
+<!-- ── Three.js WebGL canvas mount ─────────────────────────────── -->
+<div id="ar-canvas-container"></div>
+
+<!-- ── Launch / loading screen ─────────────────────────────────── -->
+<div id="launch-screen">
+  <div class="launch-logo">🥃</div>
+  <h1 class="launch-title">MapCask AR</h1>
+  <p class="launch-subtitle">
+    Walk to a bourbon find or speakeasy location and see it come to life in augmented reality.
+  </p>
+  <div class="spinner" id="loading-spinner"></div>
+  <p class="launch-status" id="ar-status-text">Initialising…</p>
+  <button id="btn-start-ar" disabled>Start AR Experience</button>
+  <p class="compat-note">
+    <strong>Best on Android Chrome 79+</strong> with WebXR support.<br />
+    iPhone &amp; other browsers use camera passthrough mode.
+  </p>
+</div>
+
+<!-- ── DOM overlay — rendered on top of the WebXR frame ─────────── -->
+<div id="ar-overlay">
+
+  <!-- Top HUD -->
+  <div id="hud-top">
+    <span class="hud-brand">MapCask AR</span>
+    <span class="hud-gps-badge" id="hud-gps">Acquiring GPS…</span>
+  </div>
+
+  <!-- Compass (top-right) -->
+  <div id="compass-widget">
+    <div class="compass-ring">
+      <span id="compass-needle">🧭</span>
+    </div>
+    <span class="compass-heading" id="hud-heading">—°</span>
+  </div>
+
+  <!-- Proximity alert toast -->
+  <div id="proximity-alert" role="alert" aria-live="polite">
+    <!-- Filled dynamically by ar-engine.js -->
+  </div>
+
+  <!-- Mode banner (shown in fallback mode) -->
+  <div id="mode-banner">
+    📷 Camera passthrough mode — WebXR not supported by this browser
+  </div>
+
+  <!-- Bottom HUD -->
+  <div id="hud-bottom">
+    <p id="hud-nearest" class="hud-stat"></p>
+    <p id="hud-object-count" class="hud-stat">0 AR objects visible</p>
+  </div>
+
+  <!-- Tappable info panel (shown when user taps an AR object) -->
+  <div id="info-panel" role="dialog" aria-modal="true">
+    <!-- Filled dynamically by ar-engine.js -->
+  </div>
+
+</div><!-- #ar-overlay -->
+
+<!-- ── Scripts ───────────────────────────────────────────────────── -->
+<script src="js/gps-tracker.js"></script>
+<script src="js/ar-objects.js"></script>
+<script src="js/unity-bridge.js"></script>
+<script src="js/ar-engine.js"></script>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Waypoint data ─────────────────────────────────────────────────────────
+  // In production this would be fetched from the MapCask API.
+  // Matches the shape of BourbonFind / Speakeasy from the Expo app's data layer.
+  const WAYPOINTS = [
+    {
+      id: 'find-1',
+      name: "Blanton's Single Barrel",
+      brand: "Blanton's",
+      price: 89.99,
+      latitude: 38.2527,
+      longitude: -85.7585,
+      description: 'Found 3 bottles on the top shelf! First time seeing these in months.',
+      type: 'bourbon',
+    },
+    {
+      id: 'find-2',
+      name: 'Pappy Van Winkle 15 Year',
+      brand: 'Pappy Van Winkle',
+      price: 899.99,
+      latitude: 38.0406,
+      longitude: -84.5037,
+      description: 'Unicorn alert! Manager said they got 6 bottles in today.',
+      type: 'bourbon',
+    },
+    {
+      id: 'find-3',
+      name: 'Weller Full Proof',
+      brand: 'Weller',
+      price: 59.99,
+      latitude: 37.8092,
+      longitude: -85.4669,
+      description: 'Full shelf of Weller! Get there before they\'re gone.',
+      type: 'bourbon',
+    },
+    {
+      id: 'find-4',
+      name: 'Eagle Rare 10 Year',
+      brand: 'Eagle Rare',
+      price: 34.99,
+      latitude: 38.2009,
+      longitude: -84.8733,
+      description: 'Restocked today! Limit 2 per customer.',
+      type: 'bourbon',
+    },
+    {
+      id: 'find-5',
+      name: 'E.H. Taylor Small Batch',
+      brand: 'E.H. Taylor',
+      price: 45.99,
+      latitude: 36.9685,
+      longitude: -86.4808,
+      description: 'Great price on EHT! Also saw some Stagg Jr behind the counter.',
+      type: 'bourbon',
+    },
+    {
+      id: 'speakeasy-1',
+      name: 'The Barrel Room',
+      brand: null,
+      price: null,
+      latitude: 38.2600,
+      longitude: -85.7520,
+      description: 'Hidden gem — ring the bell on the left.',
+      type: 'speakeasy',
+    },
+    {
+      id: 'speakeasy-2',
+      name: 'Vault 1933',
+      brand: null,
+      price: null,
+      latitude: 38.2490,
+      longitude: -85.7610,
+      description: 'Password required. Ask the bartender at Churchill\'s.',
+      type: 'speakeasy',
+    },
+  ];
+
+  // ── Engine bootstrap ──────────────────────────────────────────────────────
+  const engine = new MapCaskAREngine();
+  const statusEl = document.getElementById('ar-status-text');
+  const startBtn  = document.getElementById('btn-start-ar');
+  const spinner   = document.getElementById('loading-spinner');
+  const launchSc  = document.getElementById('launch-screen');
+
+  function setStatus(msg) {
+    console.log('[Status]', msg);
+    if (statusEl) statusEl.textContent = msg;
+  }
+
+  engine.init(WAYPOINTS, setStatus).then(() => {
+    // Hide spinner, enable button once engine is ready
+    if (spinner)  spinner.style.display  = 'none';
+    if (startBtn) startBtn.disabled = false;
+    setStatus('Ready');
+  }).catch(err => {
+    setStatus('Init error: ' + err.message);
+    console.error('[MapCask AR] Init failed:', err);
+  });
+
+  // ── Start AR button ───────────────────────────────────────────────────────
+  if (startBtn) {
+    startBtn.addEventListener('click', async () => {
+      startBtn.disabled = true;
+      startBtn.textContent = 'Starting…';
+      try {
+        await engine.startARSession();
+        // Hide the launch screen once the session is live
+        if (launchSc) launchSc.classList.add('hidden');
+
+        // Show fallback banner if not using WebXR
+        if (engine._isFallback) {
+          const banner = document.getElementById('mode-banner');
+          if (banner) banner.classList.add('visible');
+        }
+      } catch (err) {
+        startBtn.disabled = false;
+        startBtn.textContent = 'Start AR Experience';
+        setStatus('Failed: ' + err.message);
+        console.error('[MapCask AR] Session start failed:', err);
+      }
+    });
+  }
+
+  // ── Canvas tap → info panel ───────────────────────────────────────────────
+  // WebXR's hit-test drives AR object selection; in fallback we use a pointer cast.
+  const canvasContainer = document.getElementById('ar-canvas-container');
+  if (canvasContainer) {
+    canvasContainer.addEventListener('click', (e) => {
+      if (!engine.scene || !engine.camera) return;
+      const T = engine.THREE;
+      if (!T) return;
+
+      const rect = engine.renderer.domElement.getBoundingClientRect();
+      const mouse = new T.Vector2(
+        ((e.clientX - rect.left) / rect.width)  *  2 - 1,
+        ((e.clientY - rect.top)  / rect.height) * -2 + 1,
+      );
+
+      const raycaster = new T.Raycaster();
+      raycaster.setFromCamera(mouse, engine.camera);
+      const intersects = raycaster.intersectObjects(engine.scene.children, true);
+
+      if (intersects.length > 0) {
+        // Walk up the hierarchy to find the root object with a waypointId
+        let obj = intersects[0].object;
+        while (obj.parent && !obj.userData.waypointId) obj = obj.parent;
+        if (obj.userData.waypointId) {
+          const wp = WAYPOINTS.find(w => w.id === obj.userData.waypointId);
+          if (wp) engine._showInfoPanel(wp);
+        }
+      }
+    });
+  }
+
+  // ── Expose engine on window for debugging ─────────────────────────────────
+  window._mapcaskEngine = engine;
+
+})();
+</script>
+
+</body>
+</html>
