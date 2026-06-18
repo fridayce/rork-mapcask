@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Map, Compass, PlusCircle, User, Users, MessageCircle } from "lucide-react-native";
+import { Map, Compass, PlusCircle, User, Users, MessageCircle, Layers } from "lucide-react-native";
 import React from "react";
 
 import Colors from "@/constants/colors";
@@ -40,6 +40,13 @@ export default function TabLayout() {
         options={{
           title: "Add Find",
           tabBarIcon: ({ color }) => <PlusCircle size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="ar"
+        options={{
+          title: "AR",
+          tabBarIcon: ({ color }) => <Layers size={24} color={color} />,
         }}
       />
       <Tabs.Screen

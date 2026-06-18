@@ -1,0 +1,389 @@
+/* MapCask AR Experience — overlay styles */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --amber:    #E8922A;
+  --amber-dk: #A05C0A;
+  --blue:     #457B9D;
+  --surface:  rgba(12, 14, 22, 0.88);
+  --border:   rgba(232, 146, 42, 0.35);
+  --text:     #F0E8D8;
+  --text-dim: #8899AA;
+  --radius:   14px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Canvas container ─────────────────────────────────────────── */
+
+#ar-canvas-container {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+}
+
+#ar-canvas-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ── DOM overlay (sits above the WebXR frame) ─────────────────── */
+
+#ar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;   /* let taps fall through to the canvas by default */
+}
+
+/* Re-enable pointer events only on interactive overlay elements */
+#ar-overlay button,
+#ar-overlay a,
+#ar-overlay .interactive { pointer-events: auto; }
+
+/* ── Loading / launch screen ──────────────────────────────────── */
+
+#launch-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  background: radial-gradient(ellipse at center, #1A1008 0%, #08060F 100%);
+  padding: 32px;
+  text-align: center;
+}
+
+#launch-screen.hidden { display: none; }
+
+.launch-logo {
+  font-size: 64px;
+  filter: drop-shadow(0 0 20px rgba(232, 146, 42, 0.6));
+}
+
+.launch-title {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--amber);
+}
+
+.launch-subtitle {
+  font-size: 15px;
+  color: var(--text-dim);
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+.launch-status {
+  font-size: 13px;
+  color: var(--text-dim);
+  min-height: 20px;
+  letter-spacing: 0.3px;
+}
+
+#btn-start-ar {
+  margin-top: 8px;
+  padding: 16px 48px;
+  border-radius: 50px;
+  border: none;
+  background: linear-gradient(135deg, var(--amber), var(--amber-dk));
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 4px 24px rgba(232, 146, 42, 0.45);
+  transition: transform 0.15s, box-shadow 0.15s;
+  pointer-events: auto;
+}
+
+#btn-start-ar:active { transform: scale(0.96); box-shadow: 0 2px 12px rgba(232, 146, 42, 0.3); }
+#btn-start-ar:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.compat-note {
+  font-size: 12px;
+  color: var(--text-dim);
+  max-width: 300px;
+  line-height: 1.6;
+  opacity: 0.75;
+}
+
+.compat-note strong { color: var(--amber); }
+
+/* ── HUD — top bar ────────────────────────────────────────────── */
+
+#hud-top {
+  position: absolute;
+  top: 0;
+  left: 0; right: 0;
+  padding: calc(var(--safe-top) + 16px) 16px 14px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.72) 0%, transparent 100%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hud-brand {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--amber);
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.hud-gps-badge {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  color: var(--text-dim);
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ── Compass widget ───────────────────────────────────────────── */
+
+#compass-widget {
+  position: absolute;
+  top: calc(var(--safe-top) + 70px);
+  right: 16px;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.compass-ring {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#compass-needle {
+  font-size: 20px;
+  display: block;
+  transform-origin: center;
+  transition: transform 0.3s ease-out;
+}
+
+.compass-heading {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+
+/* ── Bottom HUD ───────────────────────────────────────────────── */
+
+#hud-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  padding: 14px 16px calc(var(--safe-bot) + 16px);
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hud-stat {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.hud-stat strong { color: var(--text); }
+
+#hud-nearest {
+  font-size: 13px;
+  color: var(--text);
+  text-align: center;
+  min-height: 18px;
+}
+
+/* ── Proximity alert toast ────────────────────────────────────── */
+
+#proximity-alert {
+  position: absolute;
+  top: calc(var(--safe-top) + 80px);
+  left: 16px; right: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transform: translateY(-120%);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+#proximity-alert.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.alert-icon { font-size: 32px; flex-shrink: 0; }
+
+.alert-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.alert-body strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--amber);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.alert-body span {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* ── Info panel (tap AR object) ──────────────────────────────── */
+
+#info-panel {
+  position: absolute;
+  bottom: calc(var(--safe-bot) + 80px);
+  left: 16px; right: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 20px 20px;
+  transform: translateY(120%);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.2s;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  text-align: center;
+  pointer-events: auto;
+}
+
+#info-panel.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.panel-close {
+  position: absolute;
+  top: 12px; right: 14px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.panel-icon { font-size: 40px; margin-bottom: 8px; }
+
+.panel-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--amber);
+  margin-bottom: 4px;
+}
+
+.panel-brand {
+  font-size: 14px;
+  color: var(--blue);
+  margin-bottom: 4px;
+}
+
+.panel-price {
+  font-size: 22px;
+  font-weight: 800;
+  color: #4DD080;
+  margin-bottom: 8px;
+}
+
+.panel-distance {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.panel-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* ── Fallback / error banner ──────────────────────────────────── */
+
+#mode-banner {
+  position: absolute;
+  top: calc(var(--safe-top) + 130px);
+  left: 16px; right: 16px;
+  background: rgba(69, 123, 157, 0.25);
+  border: 1px solid rgba(69, 123, 157, 0.5);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #9ABFD4;
+  text-align: center;
+  display: none;
+}
+
+#mode-banner.visible { display: block; }
+
+/* ── Loading spinner ──────────────────────────────────────────── */
+
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid rgba(232, 146, 42, 0.25);
+  border-top-color: var(--amber);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Waypoint count badge ─────────────────────────────────────── */
+
+.badge {
+  display: inline-block;
+  background: rgba(232, 146, 42, 0.2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 3px 10px;
+  font-size: 12px;
+  color: var(--amber);
+  font-weight: 600;
+}
